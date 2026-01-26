@@ -83,39 +83,16 @@ A four-phase conversational workflow that puts design thinking first:
 
 ## 🔌 Installation
 
-### Method 1: Install as Plugin (Recommended)
-
-Install this workflow as a reusable plugin across all your projects:
-
-1. **Add the marketplace:**
-   ```
-   /plugin marketplace add zaebolt/design-centered-workflow
-   ```
-
-2. **Install the plugin:**
-   ```
-   /plugin install design-centered-workflow@design-workflow-marketplace
-   ```
-
-3. **Start using it anywhere:**
-   ```
-   /design-flow [your product idea]
-   ```
-
-The plugin will be available in all your Claude Code projects!
-
-### Method 2: Clone Repository
-
-Clone this repository to use it locally:
+Clone this repository:
 
 ```bash
 git clone https://github.com/zaebolt/design-centered-workflow.git
 cd design-centered-workflow
 ```
 
-Open the directory in Claude Code and the workflow will be available via `/design-flow`.
+Open the directory in Claude Code and the workflow will be available immediately.
 
-### Usage
+## 📖 Usage
 
 **Start the workflow** - You have three options:
 
