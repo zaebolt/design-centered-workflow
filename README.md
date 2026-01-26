@@ -94,6 +94,8 @@ Open the directory in Claude Code and the workflow will be available immediately
 
 ## 📖 Usage
 
+> **⚠️ Token Usage Warning:** This workflow is comprehensive and consumes significant volume of tokens per complete run through all 4 phases. Be mindful of your Claude Pro usage limits when running this workflow. To reduce token usage during testing, use "approve with no validation" at Checkpoint 3 to skip Phase 4 and/or limit iterations in Discovery and Exploration phases.
+
 **Start the workflow** - You have three options:
 
    **Option A: Slash Command (Recommended)**
