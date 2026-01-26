@@ -2,6 +2,8 @@
 
 A conversational design-first workflow that runs natively in Claude Code. This workflow guides you through a complete design thinking process—from understanding user needs to generating working prototypes—all through natural conversation with Claude.
 
+📝 **Read the full story:** [From Vibes to Enterprise: Design Intelligence in the Age of AI](https://vpdai.substack.com/p/from-vibes-to-enterprise-design-intelligence)
+
 ## 🎯 What is This?
 
 A structured workflow that brings **design thinking methodology** to AI-assisted product development. Instead of jumping straight to code, this workflow ensures you:
