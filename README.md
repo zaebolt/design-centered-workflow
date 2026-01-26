@@ -94,7 +94,7 @@ Install this workflow as a reusable plugin across all your projects:
 
 2. **Install the plugin:**
    ```
-   /plugin install design-flow@design-tools
+   /plugin install design-centered-workflow@design-workflow-marketplace
    ```
 
 3. **Start using it anywhere:**

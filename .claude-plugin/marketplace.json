@@ -1,0 +1,19 @@
+{
+  "name": "design-workflow-marketplace",
+  "owner": {
+    "name": "zaebolt",
+    "email": ""
+  },
+  "plugins": [
+    {
+      "name": "design-centered-workflow",
+      "source": "./",
+      "description": "Claude-native conversational workflow for design-centered product development",
+      "version": "1.0.0",
+      "homepage": "https://github.com/zaebolt/design-centered-workflow",
+      "repository": "https://github.com/zaebolt/design-centered-workflow",
+      "license": "MIT",
+      "keywords": ["design", "product", "workflow", "prototype", "UX", "research", "design-thinking"]
+    }
+  ]
+}
