@@ -58,6 +58,8 @@ A four-phase conversational workflow that puts design thinking first:
 
 **Iteration Tracking:** All concept iterations and user selections are documented
 
+> **💡 Visual Exploration Tip:** You can request an interactive [playground](https://x.com/trq212/status/2017024445244924382?utm_source=alphasignal&utm_campaign=2026-01-30&lid=HW586vdt1P7mJAMF) to visually compare all design concepts side-by-side. Simply ask Claude: *"create a playground so I can explore all concepts"*. This generates a single HTML file with clickable concept previews, scoring details, and trade-offs—making it easier to make an informed selection.
+
 ### Phase 3: Design
 - **Working Prototype** - Complete Next.js application
 - **Mid-Fidelity UI** - Using Tailwind CSS
