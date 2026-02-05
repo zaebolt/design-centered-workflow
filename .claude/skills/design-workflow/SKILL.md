@@ -38,25 +38,7 @@ If not, ask: "What product or feature would you like to build?"
 
 Read and follow the main workflow guide at `.claude/workflows/design-centered.md`
 
-### 3. Initialize State
-
-Create a new state file at `.claude/state/workflow-{timestamp}.json` with:
-```json
-{
-  "timestamp": "{current-timestamp}",
-  "problem_statement": "{user's product idea}",
-  "current_phase": "discovery",
-  "phase_data": {
-    "discovery": { "iteration": 1, "user_approved": false, "competitive_skipped": false },
-    "exploration": { "iteration": 1, "concepts": [], "selected_ids": [] },
-    "design": { "status": "pending" },
-    "validation": { "status": "pending" }
-  },
-  "checkpoints_completed": []
-}
-```
-
-### 4. Start the Workflow
+### 3. Start the Workflow
 
 Present the welcome message:
 
@@ -78,7 +60,7 @@ Building: "{problem_statement}"
 
 **Proceed immediately to Phase 1 (Discovery)** - no confirmation needed.
 
-### 5. Follow the Workflow
+### 4. Follow the Workflow
 
 Execute the workflow exactly as described in `.claude/workflows/design-centered.md`:
 
@@ -86,8 +68,6 @@ Execute the workflow exactly as described in `.claude/workflows/design-centered.
 - **Phase 2:** Alternate between Explorer and Critic roles (read `.claude/prompts/exploration-explorer.md` and `.claude/prompts/exploration-critique.md`)
 - **Phase 3:** Take on Full-Stack Developer role (read `.claude/prompts/design-phase.md`)
 - **Phase 4:** Take on Product & UX Researcher role (read `.claude/prompts/validation-phase.md`)
-
-Save state after each phase completion.
 
 ---
 
@@ -106,8 +86,6 @@ Save state after each phase completion.
 - The workflow takes 20-40 minutes depending on iterations
 - Generates working Next.js prototype in `output/{project-name}/`
 - Also generates stakeholder alignment summary and test scenarios
-- State persists in `.claude/state/` for resuming
-- Can restart from any phase if needed
 
 ---
 

@@ -9,8 +9,8 @@
 # Generated prototypes
 output/
 
-# Workflow state
-.claude/state/
+# Generated playgrounds
+.claude/playgrounds/
 
 # User-specific settings
 .claude/settings.local.json

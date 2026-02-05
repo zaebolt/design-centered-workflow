@@ -69,14 +69,12 @@ The workflow is defined through markdown guide files that Claude reads and follo
 │       └── SKILL.md                # Auto-discovery skill definition
 ├── workflows/
 │   └── design-centered.md          # Main workflow orchestration guide
-├── prompts/
-│   ├── discovery-phase.md          # Product & UX Researcher role prompt (Phase 1)
-│   ├── exploration-explorer.md     # Design Explorer role prompt (Phase 2)
-│   ├── exploration-critique.md     # Design Critic role prompt (Phase 2)
-│   ├── design-phase.md             # Full-Stack Developer role prompt (Phase 3)
-│   └── validation-phase.md         # Product & UX Researcher role prompt (Phase 4)
-└── state/
-    └── workflow-{timestamp}.json   # State persistence between conversations
+└── prompts/
+    ├── discovery-phase.md          # Product & UX Researcher role prompt (Phase 1)
+    ├── exploration-explorer.md     # Design Explorer role prompt (Phase 2)
+    ├── exploration-critique.md     # Design Critic role prompt (Phase 2)
+    ├── design-phase.md             # Full-Stack Developer role prompt (Phase 3)
+    └── validation-phase.md         # Product & UX Researcher role prompt (Phase 4)
 
 output/
 └── {project-name}/                 # Generated prototypes and validation materials
@@ -97,10 +95,7 @@ This workflow is available in two forms:
 - Provides conversational workflow initiation
 
 Both methods:
-- Check for existing in-progress workflows first
-- Offer to resume if workflows found
-- Automatically capture the product idea (for new workflows)
-- Initialize workflow state
+- Automatically capture the product idea
 - Load the workflow guide
 - Present the welcome message
 - Start Phase 1 (Discovery)
@@ -230,201 +225,7 @@ Claude takes on the **Product & UX Researcher** role by reading `.claude/prompts
 
 **Checkpoint 4:** User reviews validation materials and approves or requests revisions.
 
-### State Management
-
-After each phase, Claude saves workflow state to `.claude/state/workflow-{timestamp}.json`.
-
-**State schema:**
-```json
-{
-  "timestamp": "2024-12-24T10:30:00Z",
-  "problem_statement": "User's original input",
-  "current_phase": "discovery|exploration|design|validation|complete",
-  "phase_data": {
-    "discovery": {
-      "iteration": 1,
-      "prd_version": 1,
-      "user_approved": true,
-      "competitive_skipped": false,
-      "iteration_history": [
-        {
-          "iteration": 1,
-          "timestamp": "2024-01-15T10:35:00Z",
-          "user_action": "revise",
-          "user_feedback": "Personas feel too generic",
-          "changes_made": "Added specific pain points and quotes"
-        }
-      ]
-    },
-    "exploration": {
-      "iteration": 1,
-      "concepts": [
-        {
-          "id": "sol_1",
-          "name": "Concept Name",
-          "score": 8.4
-        }
-      ],
-      "selected_ids": ["sol_1", "sol_4"],
-      "iteration_history": [
-        {
-          "iteration": 1,
-          "timestamp": "2024-01-15T11:00:00Z",
-          "user_action": "retry",
-          "user_feedback": "Explore more diverse interaction patterns",
-          "concepts_replaced": ["sol_1_1", "sol_1_3"],
-          "new_concepts": ["sol_2_1", "sol_2_2"],
-          "reason": "Low scores on conceptual clarity"
-        }
-      ]
-    },
-    "design": {
-      "status": "complete",
-      "prototype_path": "output/project-name",
-      "file_count": 12,
-      "iteration_history": [
-        {
-          "iteration": 1,
-          "timestamp": "2024-01-15T11:30:00Z",
-          "user_action": "revise",
-          "user_feedback": "Dashboard should show 6 items per row",
-          "files_changed": ["app/page.tsx"],
-          "changes_made": "Updated grid from 3 to 6 columns"
-        }
-      ]
-    },
-    "validation": {
-      "status": "complete|skipped",
-      "alignment_summary_path": "output/project-name/STAKEHOLDER_ALIGNMENT.md",
-      "test_scenarios_path": "output/project-name/TEST_SCENARIOS.md",
-      "iteration_history": []
-    }
-  },
-  "checkpoints_completed": ["discovery", "exploration", "design", "validation"]
-}
-```
-
-### Resuming Workflows
-
-The workflow **automatically detects** interrupted or in-progress workflows when you run `/design-flow`:
-
-**How it works:**
-1. Checks `.claude/state/` for existing workflow files
-2. Filters for in-progress workflows (excluding completed ones)
-3. Presents resume options based on what's found
-
-**If 1 workflow found:**
-- Shows simple choice: "continue" or "new"
-- Continues from exact checkpoint position
-
-**If multiple workflows found:**
-- Shows numbered list of all in-progress workflows
-- User selects which to resume: "continue [N]"
-- Or starts a new workflow: "new"
-
-**If no workflows found:**
-- Starts fresh workflow immediately
-
-**Each workflow is independent** - you can work on multiple product ideas simultaneously without interference. Use `/workflow-status` to manage, archive, or clean up old workflows.
-
-### Managing Multiple Workflows
-
-The `/workflow-status` command provides comprehensive workflow management:
-
-**View all workflows:**
-```bash
-/workflow-status
-```
-
-Shows:
-- All in-progress workflows
-- All completed workflows
-- Storage usage
-- Last updated timestamps
-
-**Available actions:**
-
-**1. Clean up completed workflows:**
-```
-clean completed
-```
-Deletes all completed workflow state files (prototypes in `output/` are preserved).
-
-**2. Archive old workflows:**
-```
-archive
-```
-Moves completed workflows to `.claude/state/archive/` subdirectory, keeping them for reference but removing from active list.
-
-**3. Delete specific workflow:**
-```
-delete [N]
-```
-Deletes a specific workflow state file after confirmation. Generated prototypes are never auto-deleted.
-
-**4. View archived workflows:**
-```bash
-/workflow-status --archived
-```
-
-**State directory structure:**
-```
-.claude/state/
-├── workflow-*.json         # Active workflows
-└── archive/                # Archived completed workflows
-    └── workflow-*.json
-```
-
-**Best practices:**
-- Archive completed workflows monthly to keep active list manageable
-- Use cleanup commands to manage disk space
-- Each workflow is isolated - deleting one never affects others
-- Generated prototypes in `output/` are never auto-deleted
-
-### Iteration Tracking & Auditability
-
-**Purpose:** Capture complete design evolution for enterprise traceability and accountability.
-
-#### What Gets Tracked
-
-Every time a user provides feedback or requests changes, the workflow captures:
-
-**Discovery Phase:**
-- User feedback on PRD, personas, journeys, stakeholders
-- What was changed in response
-- PRD version increments
-
-**Exploration Phase:**
-- Concepts that were rejected or replaced
-- Why they were rejected (low scores, user feedback)
-- New concepts generated in response
-
-**Design Phase:**
-- Prototype revision requests
-- Which files were changed
-- What UI/UX adjustments were made
-
-**Validation Phase:**
-- Changes to stakeholder alignment summary
-- Updates to test scenarios
-
-#### How It's Captured
-
-```json
-{
-  "iteration_history": [
-    {
-      "iteration": 2,
-      "timestamp": "2024-01-15T10:45:00Z",
-      "user_action": "revise",
-      "user_feedback": "Personas need more specific pain points",
-      "changes_made": "Added domain-specific pain points with realistic quotes"
-    }
-  ]
-}
-```
-
-Each phase has an `iteration_history` array in the state file that accumulates all feedback and changes.
+### Documentation
 
 #### DESIGN_PROCESS.md Generation
 
@@ -434,10 +235,8 @@ This ensures the documentation captures **all prototype iterations**, including 
 
 **Process:**
 1. User approves prototype (says "approve" or "approve with no validation")
-2. Workflow reads complete state file from `.claude/state/workflow-{timestamp}.json`
-3. Extracts all `iteration_history` arrays from each phase
-4. Generates `DESIGN_PROCESS.md` and `README.md`
-5. Then proceeds to Phase 4 (Validation) or Completion
+2. Generates `DESIGN_PROCESS.md` and `README.md`
+3. Then proceeds to Phase 4 (Validation) or Completion
 
 **DESIGN_PROCESS.md includes:**
 - **Discovery Iterations** - What feedback was given, what changed
@@ -447,15 +246,6 @@ This ensures the documentation captures **all prototype iterations**, including 
 - **User Need Mapping** - How each top user need is addressed
 
 This creates a complete audit trail of the design journey.
-
-#### Enterprise Benefits
-
-✅ **Auditability** - Complete record of what was tried and why
-✅ **Decision Rationale** - Justify final decisions with evidence
-✅ **Stakeholder Communication** - Show thorough exploration process
-✅ **Knowledge Capture** - Learn from rejected approaches
-✅ **Team Handoff** - New team members understand design evolution
-✅ **Compliance** - Satisfy design documentation requirements
 
 ## Role Prompt Details
 
@@ -788,17 +578,11 @@ Edit `.claude/workflows/design-centered.md` to change:
 - Change approval criteria
 - Add skip options
 
-**State management:**
-- Add new state fields
-- Change state file naming
-- Modify persistence strategy
-
 ### Adding New Phases
 
 1. **Create role prompt:** Add `.claude/prompts/new-phase.md`
 2. **Update workflow guide:** Add phase to `.claude/workflows/design-centered.md`
-3. **Update state schema:** Add phase_data fields to state JSON
-4. **Test:** Run workflow with example problem
+3. **Test:** Run workflow with example problem
 
 ## Best Practices
 
@@ -874,34 +658,6 @@ npm run dev
 2. Try: "Read .claude/workflows/design-centered.md and start the workflow"
 3. Verify you're using Claude Code (not regular Claude chat)
 4. Try restarting Claude Code
-
-### State Not Persisting
-
-**Problem:** Workflow state doesn't save between sessions
-
-**Solutions:**
-1. Check `.claude/state/` directory exists
-2. Verify Claude has write permissions for directory
-3. State saves after each phase completion (not during phases)
-4. Check for error messages in Claude's responses
-
-### Multiple Workflow Issues
-
-**Problem:** Can't find the workflow I was working on
-
-**Solutions:**
-1. Run `/workflow-status` to see all workflows
-2. Check if workflow was completed (moved to completed list)
-3. Use `/workflow-status --archived` to view archived workflows
-4. State files are named `workflow-{timestamp}.json` - check `.claude/state/` directory
-
-**Problem:** Too many workflows, list is cluttered
-
-**Solutions:**
-1. Run `/workflow-status` and use `clean completed` to remove finished workflows
-2. Use `archive` to move completed workflows to archive subdirectory
-3. Use `delete [N]` to remove specific unwanted workflows
-4. Completed workflows don't show in `/design-flow` resume list automatically
 
 ### Prototype Has Errors
 
@@ -980,14 +736,6 @@ This lets you:
 - Regenerate validation materials with updates
 - Iterate on specific phase without redoing everything
 
-### Using State Files
-
-State files in `.claude/state/` can be used to:
-- Review past workflow runs
-- Compare different explorations of same problem
-- Resume interrupted workflows
-- Share workflow progress with team
-
 ### Custom Templates
 
 Create custom templates in `.claude/prompts/` for specific domains:
@@ -1052,7 +800,6 @@ Open issues to discuss before implementing.
 - Visual design generation
 - Backend integration
 - Multi-language support
-- Resume from any checkpoint
 - Collaborative workflows
 
 ## FAQ

@@ -18,117 +18,13 @@ Each phase has iterative refinement loops and human-in-the-loop (HITL) checkpoin
 
 ---
 
-## State Management
-
-### State File Location
-`.claude/state/workflow-{timestamp}.json`
-
-### State Schema
-```json
-{
-  "timestamp": "2024-01-15T10:30:00Z",
-  "problem_statement": "User's original input",
-  "current_phase": "discovery|exploration|design|validation|complete",
-  "phase_data": {
-    "discovery": {
-      "iteration": 1,
-      "prd": "...",
-      "prd_version": 1,
-      "personas": "...",
-      "user_journeys": "...",
-      "jobs_to_be_done": "...",
-      "user_needs": "...",
-      "stakeholder_map": "...",
-      "competitive_landscape": "...",
-      "competitive_skipped": false,
-      "pm_approved": false,
-      "user_approved": false,
-      "iteration_history": [
-        {
-          "iteration": 1,
-          "timestamp": "2024-01-15T10:35:00Z",
-          "user_action": "revise",
-          "user_feedback": "Personas feel too generic, need more specific pain points",
-          "changes_made": "Added specific pain points and realistic quotes to each persona"
-        }
-      ]
-    },
-    "exploration": {
-      "iteration": 1,
-      "concepts": [
-        {
-          "id": "sol_1_1",
-          "name": "Concept Name",
-          "description": "...",
-          "score": 8.5,
-          "critique": "..."
-        }
-      ],
-      "selected_ids": [],
-      "user_feedback": "",
-      "iteration_history": [
-        {
-          "iteration": 1,
-          "timestamp": "2024-01-15T11:00:00Z",
-          "user_action": "retry",
-          "user_feedback": "Concepts should explore more diverse interaction patterns",
-          "concepts_replaced": ["sol_1_1", "sol_1_3"],
-          "new_concepts": ["sol_2_1", "sol_2_2"],
-          "reason": "Low scores on conceptual clarity"
-        }
-      ]
-    },
-    "design": {
-      "prototype_path": "output/project-name",
-      "file_count": 0,
-      "status": "pending|in_progress|complete|failed",
-      "iteration_history": [
-        {
-          "iteration": 1,
-          "timestamp": "2024-01-15T11:30:00Z",
-          "user_action": "revise",
-          "user_feedback": "Dashboard should show 6 items per row instead of 3",
-          "files_changed": ["app/page.tsx", "lib/utils.ts"],
-          "changes_made": "Updated grid layout from 3 to 6 columns"
-        }
-      ]
-    },
-    "validation": {
-      "status": "pending|in_progress|complete|skipped",
-      "alignment_summary_path": "...",
-      "test_scenarios_path": "...",
-      "iteration_history": []
-    }
-  },
-  "checkpoints_completed": []
-}
-```
-
-### State Operations
-
-**Load State:**
-```
-Read .claude/state/workflow-*.json (latest file)
-```
-
-**Save State:**
-```
-Write .claude/state/workflow-{current-timestamp}.json
-```
-
-**Update State:**
-After each significant action (PRD update, concept generation, checkpoint approval)
-
----
-
 ## Workflow Execution
 
 ### Initialization
 
 When user requests workflow (e.g., "start design workflow for [problem]"):
 
-1. **Create initial state**
-2. **Welcome message:**
+1. **Welcome message:**
 
 ```
 Design-Centered Product Workflow
@@ -146,7 +42,7 @@ Each phase has checkpoints where you can review and provide feedback.
 Building: "{problem}"
 ```
 
-3. **Proceed to Phase 1** - Start Discovery immediately
+2. **Proceed to Phase 1** - Start Discovery immediately
 
 ---
 
@@ -200,8 +96,6 @@ Building: "{problem}"
 - [Constraint 2]
 ```
 
-**Save:** Update state with PRD, increment version
-
 **Present to User:**
 ```
 📋 Product Requirements Document (v{version})
@@ -220,13 +114,6 @@ Options:
 **If user provides feedback:**
 - Increment PRD version
 - Revise PRD with feedback
-- **Save iteration history:**
-  - Add entry to `phase_data.discovery.iteration_history[]` with:
-    - `iteration`: current iteration number
-    - `timestamp`: current timestamp
-    - `user_action`: "revise"
-    - `user_feedback`: exact user feedback text
-    - `changes_made`: summary of what was changed in response
 - Return to Step 1.1
 - Max 3 iterations
 
@@ -308,8 +195,6 @@ When [situation], I want to [motivation], so I can [outcome].
 - [Assumption 2]
 ```
 
-**Save:** Update state with understanding data
-
 ### Step 1.4: Stakeholder Map
 
 **Action:** Identify all stakeholders beyond end users
@@ -335,8 +220,6 @@ When [situation], I want to [motivation], so I can [outcome].
 - Include 3-5 stakeholder groups relevant to this product
 - Remove rows that don't apply (e.g., no IT stakeholder for consumer app)
 - Focus on stakeholders who influence adoption, purchase, or success
-
-**Save:** Update state with stakeholder map
 
 ### Step 1.5: Competitive Landscape
 
@@ -365,7 +248,6 @@ Options:
 - User can add/remove/correct
 
 **If user says "skip":**
-- Mark competitive_skipped: true in state
 - Proceed to checkpoint
 
 **Output Format (if not skipped):**
@@ -380,8 +262,6 @@ Options:
 
 **Key Insight:** [1-2 sentences on competitive positioning or market gap]
 ```
-
-**Save:** Update state with competitive landscape (or mark as skipped)
 
 ### Step 1.6: Review Discovery
 
@@ -429,7 +309,7 @@ Your decision:
 ```
 
 **Handle Response:**
-- `approve` → Save checkpoint, proceed to Phase 2
+- `approve` → Proceed to Phase 2
 - `revise [feedback]` → Return to Step 1.1 with feedback
 - Invalid → Ask again
 
@@ -489,8 +369,6 @@ SOLUTION 2: [Different Approach]
 - Code should demonstrate the concept, not be complete
 - Address different user needs or personas
 
-**Save:** Add concepts to state
-
 **Present concepts to user, then immediately proceed to critique.**
 
 ### Step 2.2: Critique Agent - Evaluate Concepts
@@ -546,8 +424,6 @@ OVERALL SCORE: 7.8/10
 
 SUMMARY: [2-3 sentences on strengths and weaknesses]
 ```
-
-**Save:** Update concepts with scores and critiques
 
 ### Step 2.3: Iteration Decision
 
@@ -613,28 +489,9 @@ Your choice:
 ```
 
 **Handle Response:**
-- `1,3` or similar → Save selected IDs, proceed to Phase 3
-- `retry [feedback]` →
-  - Return to Step 2.1 with feedback
-  - **Save iteration history:**
-    - Add entry to `phase_data.exploration.iteration_history[]` with:
-      - `iteration`: current iteration number
-      - `timestamp`: current timestamp
-      - `user_action`: "retry"
-      - `user_feedback`: exact user feedback text
-      - `concepts_replaced`: list of concept IDs being replaced
-      - `new_concepts`: list of new concept IDs (filled after regeneration)
-      - `reason`: reason for replacement (e.g., "Low scores", "User requested different approach")
-- `refine [ID] [feedback]` →
-  - Regenerate specific concept with feedback
-  - **Save iteration history:**
-    - Add entry to `phase_data.exploration.iteration_history[]` with:
-      - `iteration`: current iteration number
-      - `timestamp`: current timestamp
-      - `user_action`: "refine"
-      - `user_feedback`: exact user feedback text
-      - `concept_id`: ID of concept being refined
-      - `changes_made`: summary of changes made to the concept
+- `1,3` or similar → Proceed to Phase 3
+- `retry [feedback]` → Return to Step 2.1 with feedback
+- `refine [ID] [feedback]` → Regenerate specific concept with feedback
 - Invalid → Ask again
 
 ---
@@ -677,7 +534,6 @@ Your choice:
 1. Generate project name from problem statement (kebab-case)
 2. Create each file using Write tool
 3. Validate after creation (see Step 3.2)
-4. Save state with prototype path and file count
 
 **File Creation:**
 ```
@@ -788,22 +644,12 @@ Your decision:
 ```
 
 **Handle Response:**
-- `approve` → Generate documentation (Step 3.3), save checkpoint, proceed to Phase 4
-- `approve with no validation` → Generate documentation (Step 3.3), save checkpoint, mark validation as skipped, jump to Completion
-- `revise [feedback]` →
-  - Regenerate prototype with feedback
-  - **Save iteration history:**
-    - Add entry to `phase_data.design.iteration_history[]` with:
-      - `iteration`: current iteration number
-      - `timestamp`: current timestamp
-      - `user_action`: "revise"
-      - `user_feedback`: exact user feedback text
-      - `files_changed`: list of files modified
-      - `changes_made`: summary of what was changed in response
-  - Return to Checkpoint 3 (do not generate docs until approved)
-- `restart 1` → Clear state, restart from Discovery
-- `restart 2` → Keep discovery, restart Exploration
-- `restart 3` → Keep concepts, regenerate prototype
+- `approve` → Generate documentation (Step 3.3), proceed to Phase 4
+- `approve with no validation` → Generate documentation (Step 3.3), jump to Completion
+- `revise [feedback]` → Regenerate prototype with feedback, return to Checkpoint 3 (do not generate docs until approved)
+- `restart 1` → Restart from Discovery
+- `restart 2` → Restart Exploration (keep discovery)
+- `restart 3` → Regenerate prototype (keep concepts)
 
 ### Step 3.3: Generate Documentation (Post-Approval)
 
@@ -841,15 +687,10 @@ Write(
 - User research summary (personas, journeys, JTBD, needs)
 - Stakeholder map
 - Competitive landscape (if not skipped)
-- **Discovery iteration history** (if user requested revisions)
 - All explored concepts with scores and critiques
 - Selected concept(s) and selection rationale
-- **Exploration iteration history** (if concepts were regenerated)
 - Prototype features and screens
-- **Prototype iteration history** (if user requested changes)
 - How prototype addresses user needs (map features to needs)
-
-**Data Source:** Read complete workflow state from `.claude/state/workflow-{timestamp}.json` to include all iteration_history arrays from each phase.
 
 3. **Confirm documentation generated:**
 ```
@@ -1088,17 +929,8 @@ Your decision:
 ```
 
 **Handle Response:**
-- `approve` → Mark complete, save final state, show completion summary
-- `revise [feedback]` →
-  - Regenerate validation materials with feedback
-  - **Save iteration history:**
-    - Add entry to `phase_data.validation.iteration_history[]` with:
-      - `iteration`: current iteration number
-      - `timestamp`: current timestamp
-      - `user_action`: "revise"
-      - `user_feedback`: exact user feedback text
-      - `files_changed`: list of files modified (STAKEHOLDER_ALIGNMENT.md, TEST_SCENARIOS.md)
-      - `changes_made`: summary of what was changed in response
+- `approve` → Show completion summary
+- `revise [feedback]` → Regenerate validation materials with feedback
 
 ---
 
@@ -1106,8 +938,7 @@ Your decision:
 
 **When workflow is approved (with or without validation):**
 
-1. **Save final state** with status: "complete"
-2. **Show summary:**
+**Show summary:**
 
 **If validation was completed:**
 ```
@@ -1186,34 +1017,6 @@ NEXT STEPS:
 
 ---
 
-## Resuming Workflow
-
-**If conversation interrupted:**
-
-1. **Check for existing state:**
-   ```
-   Read .claude/state/workflow-*.json (latest)
-   ```
-
-2. **If state found:**
-   ```
-   Found saved workflow state from {timestamp}
-
-   Status:
-   - Problem: {problem}
-   - Current Phase: {phase}
-   - Last Action: {last_action}
-
-   Would you like to:
-   1. **continue** - Resume from where we left off
-   2. **restart** - Start fresh
-   3. **review** - Show what we've created so far
-   ```
-
-3. **Resume from saved phase**
-
----
-
 ## Error Handling
 
 **If file generation fails:**
@@ -1241,9 +1044,8 @@ NEXT STEPS:
 2. **Show progress** - Use emojis, progress indicators
 3. **Explain decisions** - Help user understand why you're doing things
 4. **Adapt to feedback** - Don't rigidly follow if user wants something different
-5. **Save state frequently** - After every major action
-6. **Validate assumptions** - Ask if unsure about requirements
-7. **Celebrate progress** - Acknowledge completed checkpoints
+5. **Validate assumptions** - Ask if unsure about requirements
+6. **Celebrate progress** - Acknowledge completed checkpoints
 
 ---
 
