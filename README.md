@@ -238,14 +238,12 @@ Ready for stakeholder presentations and user testing!
 │       └── SKILL.md                # Auto-discovery skill definition
 ├── workflows/
 │   └── design-centered.md          # Main workflow orchestration
-├── prompts/
-│   ├── discovery-phase.md          # Product & UX Researcher role
-│   ├── exploration-explorer.md     # Design Explorer role
-│   ├── exploration-critique.md     # Design Critic role
-│   ├── design-phase.md             # Full-Stack Developer role
-│   └── validation-phase.md         # Product & UX Researcher role
-└── state/
-    └── workflow-*.json             # Conversation state persistence
+└── prompts/
+    ├── discovery-phase.md          # Product & UX Researcher role
+    ├── exploration-explorer.md     # Design Explorer role
+    ├── exploration-critique.md     # Design Critic role
+    ├── design-phase.md             # Full-Stack Developer role
+    └── validation-phase.md         # Product & UX Researcher role
 
 output/
 └── {project-name}/                 # Generated prototypes
@@ -312,8 +310,6 @@ Perfect for:
 - ✅ **Mid-fidelity prototypes** - Working code, not mockups
 - ✅ **Full context** - Claude maintains conversation history
 - ✅ **Natural interaction** - Conversational checkpoints
-- ✅ **State persistence** - Automatically resume interrupted workflows
-- ✅ **Multi-workflow support** - Work on multiple product ideas simultaneously
 - ✅ **Iterative refinement** - Revise at any checkpoint
 - ✅ **Multiple concepts** - Explore solution space before committing
 - ✅ **Iteration tracking** - Complete audit trail of design decisions
@@ -331,13 +327,10 @@ The workflow uses **role-based prompting** where Claude takes on different roles
 
 Each role has a detailed prompt in `.claude/prompts/` that Claude reads and follows. The main workflow guide (`.claude/workflows/design-centered.md`) orchestrates the overall flow.
 
-State is saved to `.claude/state/workflow-{timestamp}.json` after each phase, including iteration history for full traceability. The workflow automatically detects and offers to resume any interrupted sessions. You can work on multiple product ideas concurrently, each with independent state.
-
 ## 📖 Documentation
 
 - **[CLAUDE.md](CLAUDE.md)** - Complete workflow documentation
   - Detailed phase descriptions
-  - State management
   - Customization guide
   - Troubleshooting
   - Best practices
