@@ -1,5 +1,7 @@
 # Design-Centered Workflow for Claude Code (Proof of concept)
 
+> **➡️ Successor:** this proof of concept evolved into **[discovery-protocol](https://github.com/zaebolt/discovery-protocol)**, an installable Claude Code plugin. It runs the same discovery-to-prototype flow as a small agent team, caps questions at five with defaults, and produces a design-reviewed, clickable HTML prototype. New work happens there; this repo stays as the original.
+
 A conversational design-first workflow that runs natively in Claude Code. This workflow guides you through a complete design thinking process—from understanding user needs to generating working prototypes—all through natural conversation with Claude.
 
 📝 **Read the full story:** [From Vibes to Enterprise Design Intelligence in the Age of AI](https://vpdai.substack.com/p/from-vibes-to-enterprise-design-intelligence)
